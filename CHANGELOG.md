@@ -1,16 +1,15 @@
 # Changelog
 
 <!-- esc:version 0.9.0-dev -->
-<!-- Rule 0e: the marker above and the four other version locations must all agree.
-     Enforced by scripts/version-consistency.sh; update them together. -->
+<!-- The version above is checked in CI against Cargo.toml and every other place
+     this project states its version. Change it there too, or the check fails. -->
 
 All notable changes to this project are documented here, in
 [Common Changelog](https://common-changelog.org) form.
 
-**Do not edit the version sections below by hand.** They are assembled by
-`cargo xtask notes --version X.Y.Z` from the fragments in `.changes/`, one per
-pull request. Editing here and not there means the next release silently drops
-the edit.
+**Do not edit the version sections below by hand.** They are assembled at
+release time by `cargo xtask notes`, from one fragment per pull request.
+Editing here instead means the next release silently drops the edit.
 
 Three properties of this format were chosen against problems this project has
 actually had, rather than as convention (doctrine 05 §4.1):
@@ -22,8 +21,9 @@ actually had, rather than as convention (doctrine 05 §4.1):
 - **Breaking changes are prefixed `**Breaking:**` inline**, not filed in a
   category a reader can skip.
 
-The engineering journal — dated, free-form, and keeping its retractions — moved
-to `docs/changelog-journal.md` and does not ship.
+The engineering journal — dated, free-form, and keeping its retractions — is
+kept separately, in the development repository. This file is the user-facing
+record.
 
 <!-- esc:notes-begin -->
 <!-- esc:notes-end -->

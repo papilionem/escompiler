@@ -1,8 +1,8 @@
 # ESCompiler
 
 <!-- esc:version 0.9.0-dev -->
-<!-- Rule 0e: the marker above and the four other version locations must all agree.
-     Enforced by scripts/version-consistency.sh; update them together. -->
+<!-- The version above is checked in CI against Cargo.toml and every other place
+     this project states its version. Change it there too, or the check fails. -->
 
 A JavaScript/TypeScript to native code ahead-of-time (AOT) compiler.
 
@@ -42,7 +42,7 @@ Also verified and worth stating plainly: **array bounds behaviour is spec-correc
 
 ### Known broken or missing
 
-Verified by hand on 2026-08-11 at commit `f782631`; evidence in `docs/research/40-binary-findings-summary.md`. Earlier versions of this list omitted everything in the first group, which was the most misleading thing in this document.
+Verified by hand on 2026-08-11 at commit `f782631`. The measurement notes behind each row live in the development repository rather than here; every claim below is reproducible from this tree with the commands in the sections that follow. Earlier versions of this list omitted everything in the first group, which was the most misleading thing in this document.
 
 **Answers that were wrong. These were correctness defects, not missing features:**
 
