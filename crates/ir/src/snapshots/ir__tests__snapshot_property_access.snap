@@ -1,0 +1,15 @@
+---
+source: crates/ir/src/tests.rs
+expression: output
+---
+fn @props() -> jsvalue {
+  bb0:
+    %v0: jsobject = create_object
+    %v1: jsstring = const_string @0
+    %v2: i32 = const_i32 42
+    %v3: jsvalue = box_i32 %v2
+    set_prop %v0, %v1, %v3
+    %v5: jsvalue = get_prop %v0, %v1
+    %v6: bool = has_prop %v0, %v1
+    ret %v5
+}

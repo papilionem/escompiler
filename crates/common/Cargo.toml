@@ -1,0 +1,12 @@
+[package]
+name = "common"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+miette.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

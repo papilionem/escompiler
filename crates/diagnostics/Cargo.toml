@@ -1,0 +1,10 @@
+[package]
+name = "diagnostics"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+miette = { workspace = true }
+thiserror = { workspace = true }
+common = { workspace = true }

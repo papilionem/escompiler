@@ -1,0 +1,33 @@
+[package]
+name = "llvm"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+inkwell = { workspace = true, optional = true }
+common.workspace = true
+ir.workspace = true
+nanbox.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+insta.workspace = true
+
+# The LLVM backend is off by default, and that is the whole point of ESC-127.
+#
+# This is a virtual workspace, so `cargo build` builds every member. With
+# inkwell as a hard dependency that made a system LLVM mandatory for the most
+# obvious command in the repository -- on a backend that is not the supported
+# one (Cranelift is, ESC-19) and that currently miscompiles.
+#
+# The `llvm` feature on `driver` and `cli` was already optional and off by
+# default. That was true and did not help: it is optional for THEM, and
+# `cargo build` does not build them, it builds every member.
+#
+# With the feature off this crate compiles to an empty library. Enabling
+# `driver/llvm` or `cli/llvm` turns it back on, and dev CI passes
+# --all-features so the backend and its 98 tests still build and run there.
+[features]
+default = []
+inkwell = ["dep:inkwell"]

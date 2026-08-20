@@ -1,0 +1,57 @@
+# XFAIL registry — fixtures known to fail, with the reason.
+#
+# Rules enforced by crates/driver/tests/compile_run.rs, each proven by
+# scripts/harness-negative-control.sh:
+#   fails + listed here      -> expected
+#   fails + NOT listed       -> hard failure
+#   PASSES while listed here -> hard failure; delete the line
+#   listed but never ran     -> hard failure; the entry is stale
+#
+# The count only ratchets DOWN. Fixing a defect turns this suite red until the
+# line is removed, so a fix is an event CI announces rather than a judgement
+# someone makes.
+#
+# Generated from a real run 2026-08-12: 318 passed, 46 failed, 364 executed.
+
+arrow_no_prototype  # stdout expected 'true
+class_accessor  # expected exit code 0, got 1
+class_super  # stdout expected 'Rex barks loudly', got 'undefined barks loudly'
+closure_loop  # stdout expected '0
+dynamic_import_await  # stdout expected '42
+dynamic_import_basic  # stdout expected 'object', got 'undefined'
+dynamic_import_default  # stdout expected 'hello', got ''
+dynamic_import_error  # stdout expected 'import failed', got 'should not reach'
+dynamic_import_then  # expected exit code 0, got 1
+eval_closure_arrow  # stdout expected '10
+eval_closure_capture  # stdout expected '42', got 'undefined'
+eval_closure_modify  # stdout expected '1
+eval_closure_nested  # stdout expected '30', got 'NaN'
+eval_with_closure  # expected exit code 0, got 1
+eval_with_delete  # stdout expected 'true
+eval_with_nested  # expected exit code 0, got 1
+eval_with_proxy_get  # stdout expected 'has x
+eval_with_proxy_has  # stdout expected 'has y
+eval_with_proxy_revoke  # expected exit code 0, got 1
+eval_with_proxy_unscopables  # stdout expected 'outer
+eval_with_strict  # stdout expected '42
+for_let_closure  # stdout expected '0
+for_let_closure_multi  # stdout expected '10
+nested_with_basic  # expected exit code 0, got 1
+nested_with_eval  # expected exit code 0, got 1
+permission_no_eval_error  # expected compilation error but succeeded
+permission_no_ffi_error  # expected compilation error but succeeded
+proxy_revocable  # expected exit code 0, got 1
+static_block  # expected exit code 0, got 1
+with_closure_escape  # expected exit code 0, got 1
+with_for_in_closure  # expected exit code 0, got 1
+with_loop_array  # expected exit code 0, got 1
+with_loop_closure  # expected exit code 0, got 1
+with_proxy_has  # stdout expected 'has:x
+with_proxy_revoked  # expected exit code 0, got 1
+with_proxy_unscopables  # stdout expected 'outer
+with_while_closure  # expected exit code 0, got 1
+
+
+# Found by the Node differential 2026-08-12: its expectation had been written
+# from esc's own output and so certified the defect as correct.
+eval_with_proxy_set  # `eval` resolved at compile time, so the Proxy has-trap never fires; node prints an extra `has eval`

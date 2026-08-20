@@ -1,0 +1,11 @@
+[package]
+name = "repl"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { workspace = true }
+cranelift = { workspace = true }
+ir = { workspace = true }
+rustyline = { workspace = true }

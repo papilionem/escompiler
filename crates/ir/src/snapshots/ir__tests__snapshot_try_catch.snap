@@ -1,0 +1,16 @@
+---
+source: crates/ir/src/tests.rs
+expression: output
+---
+fn @try_catch() -> jsvalue {
+  bb0:
+    try_begin bb1
+    %v1: jsstring = const_string @0
+    throw %v1
+  bb1:
+    %v3: jsvalue = catch
+    %v4: jsvalue = get_exception %v3
+    br bb2
+  bb2:
+    ret %v4
+}

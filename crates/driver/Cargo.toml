@@ -1,0 +1,37 @@
+[package]
+name = "driver"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { workspace = true }
+parser = { workspace = true }
+ir = { workspace = true }
+desugar = { workspace = true }
+generator_transform = { workspace = true }
+types = { workspace = true }
+cranelift = { workspace = true, optional = true }
+llvm = { workspace = true, optional = true }
+linker = { workspace = true }
+diagnostics = { workspace = true }
+modules = { workspace = true }
+host = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tempfile = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+# Test-only: the integration fixture harness compiles, links and runs 373 real
+# programs. Serially that is ~595s and 94% of total CI wall-clock (ESC-113).
+rayon = { workspace = true }
+
+
+[features]
+default = ["cranelift"]
+# Both halves are required. `dep:llvm` pulls the crate in; `llvm/inkwell`
+# turns its contents on. Without the second, enabling driver/llvm links an
+# empty library and `llvm::codegen` does not exist (ESC-127).
+llvm = ["dep:llvm", "llvm/inkwell"]

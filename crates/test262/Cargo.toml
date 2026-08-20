@@ -1,0 +1,15 @@
+[package]
+name = "test262"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+driver = { workspace = true }
+rayon = { workspace = true }
+thiserror = { workspace = true }
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

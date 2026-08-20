@@ -1,0 +1,8 @@
+[toolchain]
+# Pinned for CI reproducibility and dependency-upgrade delta attribution.
+# Bump monthly in a dedicated PR; keep in sync with the CI base image.
+# 2026-08: 1.95.0 -> 1.97.1 to align with inoxidian (shared self-hosted cache)
+# and pick up rust-lld/build.build-dir improvements. Keep in sync with
+# .github/ci-image/Dockerfile.
+channel = "1.97.1"
+components = ["clippy", "rustfmt"]

@@ -1,0 +1,21 @@
+[package]
+name = "eval"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common.workspace = true
+nanbox.workspace = true
+parser.workspace = true
+desugar.workspace = true
+ir.workspace = true
+runtime.workspace = true
+cranelift-jit.workspace = true
+cranelift-codegen.workspace = true
+cranelift-frontend.workspace = true
+cranelift-module.workspace = true
+target-lexicon.workspace = true
+thiserror.workspace = true
+oxc_span.workspace = true
+oxc_ast.workspace = true

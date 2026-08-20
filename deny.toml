@@ -1,0 +1,47 @@
+# cargo-deny configuration for ESCompiler
+#
+# Enforces: license compliance, RustSec advisories, duplicate crate detection
+# (R16 — workspace dependency centralization), and registry hygiene.
+#
+# Blocking CI lane — failures prevent merge.
+
+[graph]
+targets = [
+    "x86_64-unknown-linux-gnu",
+]
+
+[advisories]
+# Fail on any unignored advisory (RustSec).
+# Uses version = 2 (field-level lints deprecated).
+version = 2
+ignore = []
+
+[licenses]
+# Allow standard Rust-ecosystem licenses.
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+]
+# `unlicensed` key removed upstream in cargo-deny ≥0.15 (PR #611); workspace
+# crates are handled by [licenses.private] below.
+confidence-threshold = 0.8
+[licenses.private]
+ignore = true
+
+[bans]
+# R16: workspace dependency centralization.
+# Workspace crates use `workspace = true` which appears as wildcards — allow it.
+# Duplicate versions exist in the dep tree; warn but don't block PRs.
+multiple-versions = "warn"
+wildcards = "allow"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

@@ -1,0 +1,223 @@
+# The verification corpus.
+#
+# Every sealed rung exit criterion is a command that runs this file through
+# `cargo xtask verify`. An entry states what would FALSIFY it; there is no kind
+# meaning "run it and see".
+#
+#   match     stdout byte-identical to the pinned node, plus stderr CLASS and
+#             exit-status class. The external oracle.
+#   refused   the compiler must exit 2 naming a declared ESC-Ennn code.
+#   artifact  a property of the built binary (e.g. a symbol that must be absent).
+#
+# xfail follows the same three rules as tests/integration/xfail.txt: failing while
+# listed is expected, failing unlisted is a hard failure, and PASSING while listed
+# is ALSO a hard failure — that is how a fix announces itself.
+
+node_pin = "v24.14.0"
+
+# --- Arithmetic. These were the flagship defect and now pass; they stay as
+# --- regression cover, because the unsound rewrite is two lines from returning.
+[[entry]]
+id = "arith-div-half"
+program = "tests/integration/fixtures/arith-div-half.js"
+kind = "match"
+note = "7/2. Printed 3 until R1-03 deleted the I32 arithmetic specialisation."
+
+[[entry]]
+id = "arith-div-by-zero"
+program = "tests/integration/fixtures/arith-div-by-zero.js"
+kind = "match"
+note = "1/0. Died with SIGILL (exit 132) until R1-03; f64 division does not trap."
+
+[[entry]]
+id = "arith-mod-by-zero"
+program = "tests/integration/fixtures/arith-mod-by-zero.js"
+kind = "match"
+note = "9%0. Died with SIGFPE (exit 136) until R1-03."
+
+[[entry]]
+id = "arith-mul-overflow"
+program = "tests/integration/fixtures/arith-mul-overflow.js"
+kind = "match"
+note = "1e5*1e5 wrapped to 1410065408 under 32-bit multiply."
+
+# --- The artifact claim. The one differentiator that is true today, and it is
+# --- true by accident until something asserts it.
+[[entry]]
+id = "no-interpreter-in-artifact"
+program = "tests/integration/fixtures/arith-div-half.js"
+kind = "artifact"
+absent_symbols = ["cranelift_codegen", "oxc_parser"]
+note = "\"this binary contains no interpreter\" — 0 cranelift and 0 oxc symbols."
+
+# --- Spread over a non-array iterable. The first three were the R1-05a defect
+# --- and now pass; they stay as regression cover, because the fix is a single
+# --- InternalKind check away from being reverted. The fourth is NOT the same
+# --- defect and is registered against ESC-102 — see its note.
+[[entry]]
+id = "iter-spread-set"
+program = "tests/verify/programs/iter-spread-set.js"
+kind = "match"
+note = "[...new Set([1,1,2])].length gives 0; node gives 2."
+
+[[entry]]
+id = "iter-spread-map"
+program = "tests/verify/programs/iter-spread-map.js"
+kind = "match"
+note = "[...new Map([[1,2],[3,4]])].length gives 0; node gives 2."
+
+[[entry]]
+id = "iter-spread-generator"
+program = "tests/verify/programs/iter-spread-generator.js"
+kind = "match"
+note = "[...g()].length gives 0; node gives 2. for-of over the same generator works."
+
+[[entry]]
+id = "iter-spread-call-args"
+program = "tests/verify/programs/iter-spread-call-args.js"
+kind = "match"
+note = "Math.max(...new Set([1,5,3])) gives -Infinity. NOT R1-05a: Math.max(...[1,5,3]) fails identically with a plain array."
+
+# --- The iterator paths that already work. R1-05a must not break them: they are
+# --- the boundary that says the fix belongs in spread, not in the iterator
+# --- protocol. Measured passing 2026-08-12 against node v24.14.0.
+[[entry]]
+id = "iter-spread-array"
+program = "tests/verify/programs/iter-spread-array.js"
+kind = "match"
+note = "[...[1,2,3]].length — spread over an array. Already correct."
+
+[[entry]]
+id = "iter-spread-string"
+program = "tests/verify/programs/iter-spread-string.js"
+kind = "match"
+note = "[...\"abc\"].length — spread over a string. Already correct."
+
+[[entry]]
+id = "iter-forof-set"
+program = "tests/verify/programs/iter-forof-set.js"
+kind = "match"
+note = "for-of over a Set. Already correct — which is why the defect is spread-specific."
+
+[[entry]]
+id = "iter-forof-map"
+program = "tests/verify/programs/iter-forof-map.js"
+kind = "match"
+note = "for-of over a Map, destructuring the entry pair. Already correct."
+
+[[entry]]
+id = "iter-forof-generator"
+program = "tests/verify/programs/iter-forof-generator.js"
+kind = "match"
+note = "for-of over a generator. Already correct."
+
+[[entry]]
+id = "typeof-builtin-method"
+program = "tests/verify/programs/typeof-builtin-method.js"
+kind = "match"
+note = "typeof console.error exits 1 with zero bytes on both streams; node prints \"function\"."
+
+[[entry]]
+id = "null-eq-undefined"
+program = "tests/verify/programs/null-eq-undefined.js"
+kind = "match"
+note = "language/expressions/equals is already in QUICK_CATEGORIES and this ships broken regardless, because a threshold is an aggregate."
+
+[[entry]]
+id = "unimplemented-global"
+program = "tests/verify/programs/unimplemented-global.js"
+kind = "refused"
+code = "ESC-E300"
+note = "The refusal named in the sealed rung's Contents that never got an R1-nn row."
+
+# --- R1-05b · `console` is only a call site, not a value (ESC-35).
+# --- The four below are the defect. `typeof-builtin-method` above is the fifth
+# --- and predates this block. Boundary entries follow: they pass today and are
+# --- what says the fix belongs in global RESOLUTION, not in call lowering.
+[[entry]]
+id = "console-typeof-object"
+program = "tests/verify/programs/console-typeof-object.js"
+kind = "match"
+note = "node prints \"object\"; esc prints \"undefined\" at exit 0. The silent-wrong-answer half."
+
+[[entry]]
+id = "console-method-as-value"
+program = "tests/verify/programs/console-method-as-value.js"
+kind = "match"
+note = "node prints \"function\"; esc exits 1 with zero bytes on both streams."
+
+[[entry]]
+id = "console-feature-detect"
+program = "tests/verify/programs/console-feature-detect.js"
+kind = "match"
+note = "node prints \"has console\"; esc prints \"no console\" at exit 0. Exits clean, so it looks like it worked."
+
+[[entry]]
+id = "console-direct-call"
+program = "tests/verify/programs/console-direct-call.js"
+kind = "match"
+note = "console.log + console.error in CALL position. Already correct — the compile-time fast path this ticket must not delete."
+
+[[entry]]
+id = "builtin-typeof-math-floor"
+program = "tests/verify/programs/builtin-typeof-math-floor.js"
+kind = "match"
+note = "typeof Math.floor / [].push / \"\".slice. Already correct, so this is console-specific and not a general builtin-method-as-value defect. Whatever Math does is the model."
+
+# --- R1-05e · `with` inside a function (ESC-82). Top-level `with` works and
+# --- `with` over a PARAMETER works; only `with` over an outer binding inside a
+# --- function fails. That pair is the narrowing — measured 2026-08-13.
+[[entry]]
+id = "with-fn-return"
+program = "tests/verify/programs/with-fn-return.js"
+kind = "match"
+note = "node prints 1; esc exits 1 having written nothing."
+
+[[entry]]
+id = "with-fn-stmt"
+program = "tests/verify/programs/with-fn-stmt.js"
+kind = "match"
+note = "node prints \"inside\" then \"done\"; esc exits 1 with no output. Even the statement AFTER the with-block is lost."
+
+[[entry]]
+id = "with-fnexpr-in-with"
+program = "tests/verify/programs/with-fnexpr-in-with.js"
+kind = "match"
+note = "node prints 1; esc exits 1 with no output."
+
+[[entry]]
+id = "with-toplevel"
+program = "tests/verify/programs/with-toplevel.js"
+kind = "match"
+note = "Top-level `with` reading a property. Already correct — the boundary that says this is function-scoped, not a `with` defect as such."
+
+[[entry]]
+id = "with-fn-param-object"
+program = "tests/verify/programs/with-fn-param-object.js"
+kind = "match"
+note = "`with` over a PARAMETER inside a function. Already correct. Contrast with with-fn-return, which differs only in the object being an outer binding — that contrast localises the defect."
+
+# --- R1-05f · an async function does not return a Promise (ESC-33).
+[[entry]]
+id = "async-returns-promise"
+program = "tests/verify/programs/async-returns-promise.js"
+kind = "match"
+note = "node prints \"object true\"; esc prints \"number false\" — the return value is the bare 5."
+
+[[entry]]
+id = "async-then-callback"
+program = "tests/verify/programs/async-then-callback.js"
+kind = "match"
+note = "node prints \"sync\" then \"got 5\"; esc exits 1 with zero bytes on both streams."
+
+[[entry]]
+id = "async-await-ordering"
+program = "tests/verify/programs/async-await-ordering.js"
+kind = "match"
+note = "node prints a1/b1/sync/a2 5; esc prints a1/sync and never resumes. The awaited body never runs at all."
+
+[[entry]]
+id = "async-await-promise-resolve"
+program = "tests/verify/programs/async-await-promise-resolve.js"
+kind = "match"
+note = "await Promise.resolve(5) — resumes correctly today. The boundary: awaiting a real Promise works, so the defect is in what an async CALL produces, not in await."

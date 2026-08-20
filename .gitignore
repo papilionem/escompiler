@@ -1,0 +1,24 @@
+# Rust build output
+/target/
+**/*.rs.bk
+
+# Compiled artifacts produced by the compiler itself
+*.o
+*.a
+*.so
+*.dylib
+a.out
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# The test262 suite is fetched, not vendored. See tests/test262/README.md.
+/tests/test262/test262/

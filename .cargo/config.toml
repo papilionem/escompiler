@@ -1,0 +1,7 @@
+[env]
+LLVM_SYS_180_PREFIX = "/usr/lib64/llvm18"
+
+[alias]
+# `cargo xtask verify` — the corpus runner. Every sealed rung exit criterion
+# is a command that invokes it.
+xtask = "run --quiet --package xtask --"

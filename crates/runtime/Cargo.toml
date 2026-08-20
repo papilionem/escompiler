@@ -1,0 +1,31 @@
+[package]
+name = "runtime"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[lib]
+# cdylib produces libruntime.so alongside the static archive, for the CI/test
+# link path: linking test binaries dynamically against one shared runtime (vs
+# re-linking the ~100 MB static archive per test) collapses per-test link cost
+# and binary size. The staticlib stays for release / `esc build` (ESC-59
+# embeds it). All ABI fns are `#[unsafe(no_mangle)] pub extern "C"`, so the
+# cdylib exports the full `__esc_rt_*` surface the generated code references.
+crate-type = ["lib", "staticlib", "cdylib"]
+
+[dependencies]
+common = { workspace = true }
+nanbox = { workspace = true }
+arena = { workspace = true }
+zone = { workspace = true }
+shapes = { workspace = true }
+strings = { workspace = true }
+exceptions = { workspace = true }
+interner = { workspace = true }
+regexp = { workspace = true }
+cycles = { workspace = true }
+host = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }

@@ -1,0 +1,20 @@
+[package]
+name = "ir"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { workspace = true }
+interner = { workspace = true }
+nanbox = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+proptest.workspace = true
+insta.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "ir_builder"
+harness = false

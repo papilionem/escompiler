@@ -1,0 +1,18 @@
+[package]
+name = "desugar"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { workspace = true }
+parser = { workspace = true }
+ir = { workspace = true }
+interner = { workspace = true }
+oxc_ast = { workspace = true }
+oxc_span = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+generator_transform = { workspace = true }
+insta = { workspace = true }

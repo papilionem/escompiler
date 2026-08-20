@@ -1,0 +1,25 @@
+[package]
+name = "cli"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "esc"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+driver = { workspace = true }
+common = { workspace = true }
+diagnostics = { workspace = true }
+host = { workspace = true }
+
+[target.'cfg(not(windows))'.dependencies]
+tikv-jemallocator = { workspace = true }
+
+
+[features]
+default = ["cranelift"]
+cranelift = ["driver/cranelift"]
+llvm = ["driver/llvm"]

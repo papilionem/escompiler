@@ -1,0 +1,19 @@
+[package]
+name = "cranelift"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+cranelift-frontend.workspace = true
+cranelift-codegen.workspace = true
+cranelift-object.workspace = true
+cranelift-module.workspace = true
+common.workspace = true
+ir.workspace = true
+nanbox.workspace = true
+target-lexicon.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+insta.workspace = true

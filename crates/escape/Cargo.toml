@@ -1,0 +1,9 @@
+[package]
+name = "escape"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common = { workspace = true }
+ir = { workspace = true }

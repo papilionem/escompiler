@@ -1,0 +1,11 @@
+[package]
+name = "strings"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

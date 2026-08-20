@@ -1,0 +1,12 @@
+[package]
+name = "zone"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+arena.workspace = true
+common.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

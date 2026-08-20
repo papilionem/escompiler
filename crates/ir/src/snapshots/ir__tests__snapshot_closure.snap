@@ -1,0 +1,18 @@
+---
+source: crates/ir/src/tests.rs
+expression: output
+---
+fn @make_counter() -> jsfunction {
+  bb0:
+    %v0: i32 = const_i32 1
+    %v1: ptr = env_create %v0
+    %v2: i32 = const_i32 0
+    %v3: i32 = const_i32 0
+    env_store %v1, %v3, %v2
+    %v5: i32 = const_i32 0
+    %v6: jsvalue = env_load %v1, %v5
+    %v7: i32 = const_i32 1
+    %v8: i32 = const_i32 0
+    %v9: jsfunction = create_closure %v7, %v1, %v8
+    ret %v9
+}

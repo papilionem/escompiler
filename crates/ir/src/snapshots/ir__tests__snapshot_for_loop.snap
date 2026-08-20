@@ -1,0 +1,22 @@
+---
+source: crates/ir/src/tests.rs
+expression: output
+---
+fn @loop_sum() -> i32 {
+  bb0:
+    %v0: i32 = const_i32 0
+    br bb1
+  bb1:
+    %v6: i32 = phi %v0, %v7, bb0, bb2
+    %v2: i32 = phi %v0, %v9, bb0, bb2
+    %v3: i32 = const_i32 10
+    %v4: bool = lt_i32 %v2, %v3
+    br_if %v4, bb2, bb3
+  bb2:
+    %v7: i32 = add_i32 %v6, %v2
+    %v8: i32 = const_i32 1
+    %v9: i32 = add_i32 %v2, %v8
+    br bb1
+  bb3:
+    ret %v6
+}

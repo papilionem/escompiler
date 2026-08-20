@@ -1,0 +1,10 @@
+[package]
+name = "generator_transform"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+ir = { path = "../ir" }
+common = { path = "../common" }
+thiserror = { workspace = true }

@@ -1,0 +1,78 @@
+# Public repository CI — ADR-0003 L6.
+#
+# Materialised from scripts/publish-templates/public-ci.yml in the development
+# repository. Do not edit here; edit the template.
+#
+# Deliberately plain. It runs on GitHub-hosted runners, pulls no private
+# container image, and knows nothing about the self-hosted fleet, the test262
+# thresholds or the corpus gates. Those are development infrastructure.
+#
+# What this proves is narrow and worth stating: that the published source is
+# complete enough to build and test on a machine that has never seen the
+# development repository. ADR-0003 T2 is the reason that check lives here
+# rather than upstream — built from the dev tree, we could publish a repository
+# that does not compile and never find out.
+
+name: CI
+
+# Every branch, not only main. A verification branch pushed before the first
+# release must be able to prove the published source builds; restricting the
+# trigger to main would mean the only way to test the pipeline is to run it for
+# real, which is the opposite of what a dry run is for.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install the pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      # No --exclude llvm here, and no LLVM install either. crates/llvm's
+      # contents are behind an off-by-default feature (ESC-127), so the default
+      # member set builds with no system LLVM. That is the property this job
+      # exists to keep true for anyone who clones the repository.
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets
+
+      - name: Build
+        run: cargo build --workspace
+
+      # The driver links target/debug/libruntime.a into the binaries it
+      # compiles, so the runtime staticlib must exist before its tests run.
+      - name: Build the runtime staticlib
+        run: cargo build -p runtime
+
+      - name: Test
+        run: cargo test --workspace
+
+      # The test262 suite is fetched, not vendored, so the conformance runs are
+      # marked ignored here and stay in the development repository. This step
+      # exists so that fact is visible in the log rather than silently absent.
+      - name: Note on conformance
+        run: |
+          echo "test262 conformance runs are marked ignored in this repository:"
+          echo "the pinned suite is fetched, not vendored. See tests/test262/README.md."

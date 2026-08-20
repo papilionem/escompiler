@@ -1,0 +1,15 @@
+[package]
+name = "stdlib"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+common.workspace = true
+nanbox.workspace = true
+runtime.workspace = true
+host.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+desugar.workspace = true
